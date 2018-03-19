@@ -46,5 +46,11 @@ merged <- reshape2::melt(data = merged, id = c("SubjectNum", "Activity"))
 merged <- reshape2::dcast(data = merged, SubjectNum + Activity ~ variable, fun.aggregate = mean)
 View(merged)
 
+# Melting all Features in the newly merged dataset, towards a more tidy dataset.
+mergeMelt <- melt(merged, id = c("SubjectNum", "Activity"), measure.vars = measurements)
+names(mergeMelt)[names(mergeMelt) == 'variable'] <- 'Feature'
+names(mergeMelt)[names(mergeMelt) == 'value'] <- 'Measurement'
+mergeMelt <- setorder(mergeMelt, SubjectNum)
+
 # Creating an independent tidy dataset.
-data.table::fwrite(x = merged, file = "tidyData.txt", quote = FALSE)
+data.table::fwrite(x = mergeMelt, file = "tidyData.txt", quote = FALSE)
